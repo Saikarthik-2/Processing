@@ -1,0 +1,163 @@
+<html>
+<head></head>
+
+<body>
+
+<canvas id="mycanvas"></canvas>
+</body>
+
+<script src="processing.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
+
+
+PImage[] pacman= new PImage[10];
+PImage food, enemy;
+PImage BG;
+int radius = 40;
+float x = radius,randx=100,prevx,enx=width;
+float y = 60,randy=60,eny=height;
+float speed = 15;
+boolean boolFood=false;
+int score=0;
+PImage GOver;
+int prevsec = second();
+int temp=0;
+int time=10;
+void setup() {
+
+  
+  frameRate(60);
+ size(640,480);
+ smooth();
+  background(0);
+ ellipseMode(RADIUS);
+}
+void changeFood(){
+  randx = int(random(width));
+  randy=int(random(height));
+}
+void drawFood(){
+    food = loadImage("fruit_cherry.gif");
+    //image(food,randx,randy); 
+    ellipse(randx,randy,10,10);
+    boolFood= true;
+  
+}
+void Point(){ 
+  if(((x>=randx-speed)&&x<=randx+speed)&&((y>=randy-speed)&&(y<=randy+speed)))
+ { background(255,0,0);
+ boolFood = false;
+ score++;
+ time+=5;
+ //file.play();
+ }
+ if(((eny>=randx-speed)&&eny<=randx+speed)&&((enx>=randy-speed)&&(enx<=randy+speed)))
+ { background(255,0,0);
+ boolFood = false;
+ score--;
+ time-=15;
+ //file.play();
+ }
+}
+void keyPressed() {
+  if (key == CODED) {
+    if (keyCode == UP)
+    {
+     y-=speed;
+     if(y<0)
+     y=height;
+    }
+    else if (keyCode == DOWN)
+    {
+      y+=speed;
+      if(y>height)
+      y=0;
+    } 
+   else if (keyCode== RIGHT)
+   {prevx=x;
+    x+=speed;
+    if(x>width)
+    x=0;
+   }
+   else if(keyCode == LEFT)
+   {
+    x-=speed;
+    if(x<0)
+    x=width;
+   }
+  }
+   
+   
+}
+void enemy()
+{ 
+ 
+ //enemy = loadImage("enemy.png") ;
+ 
+ //image(enemy, eny,enx, 40,40);
+ 
+ if(dist(eny,enx,x,y)>dist(eny,enx,randx,randy))
+ {
+  if(randx>=eny)
+  eny+=(log((score+1)%speed));
+  else 
+  eny-=(log((score+1)%speed));
+  if(randy>=enx)
+  enx+=(log((score+1)%speed));
+  else 
+  enx-=(log((score+1)%speed));
+ }
+ 
+ else 
+ {
+ if(x>eny)
+  eny+=(log((score+1)%speed));
+  else 
+  eny-=(log((score+1)%speed));
+  if(y>enx)
+  enx+=(log((score+1)%speed));
+  else 
+  enx-=(log((score+1)%speed));
+ 
+ }
+ 
+ if(dist(eny,enx,randx,randy)<10)
+ {
+   eny = random(randx-500,randx+500);
+   enx = random(randy-500,randy+500);
+ }
+ if(enx>height)
+ enx=0;
+ if(enx<0)
+ enx=height;
+ if(eny>width)
+ eny=0;
+ if(eny<0)
+ eny=width;
+ //GOver = loadImage("GameOver.png");
+  if(((y>=enx-40)&&(y<=enx+40))&&((x>=eny-40)&&(x<=eny+40)))
+  {
+    score--;
+    noLoop();
+    //image(GOver,width/2,height/2);
+    //textFont(g);
+    //textMode(RIGHT);
+    text("Score:", width/2,2*height/3);
+    text(score, width/2+20,2*height/3);
+  }
+}
+float dist(int a, int b, int x, int y)
+{
+ float distance;
+ distance = sqrt(sq(x-a)+sq(y-b));
+ return distance;
+}
+
+void draw()
+{
+changeFood();
+ drawFood();
+ Point();
+}
+</script>
+</html>
